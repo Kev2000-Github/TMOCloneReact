@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav id="topNavBar" class="navbar navbar-dark bg-dark">
+      <div id="buttons" class="d-flex justify-content-center">
+        <button
+          style="margin: 5px;"
+          id="previous"
+          class="btnPrevious btn btn-secondary m-2"
+        >
+          Atras
+        </button>
+        <button id="visualMode" class="visualModeBtn btn btn-primary m-2">
+          Cascada
+        </button>
+        <button
+          style="margin: 5px;"
+          id="next"
+          class="btnNext btn btn-secondary m-2"
+        >
+          Siguiente
+        </button>
+        <div id="selectBlock"></div>
+      </div>
+    </nav>
+    <main id="mangaBody">
+      <div id="mangaContainer">
+        <div id="mangaMode1" class="show">
+          <img id="mangaPage" class="pointer" />
+        </div>
+        <div id="mangaMode0" class="none"></div>
+        <div id="placeholderImg" class="none">
+          <img id="preloadImg" src="./200.gif" />
+        </div>
+      </div>
+    </main>
+    <nav class="navbar navbar-dark bg-dark">
+      <div id="buttons" class="d-flex justify-content-center">
+        <button
+          style="margin: 5px;"
+          id="previousBottom"
+          class="btnPrevious btn btn-secondary m-2"
+        >
+          Atras
+        </button>
+        <button id="visualModeBottom" class="visualModeBtn btn btn-primary m-2">
+          Cascada
+        </button>
+        <button
+          style="margin: 5px;"
+          id="nextBottom"
+          class="btnNext btn btn-secondary m-2"
+        >
+          Siguiente
+        </button>
+      </div>
+    </nav>
+    <script src="../commonFunctions.js"></script>
+    <script src="../ImageCache.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
