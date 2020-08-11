@@ -105,7 +105,7 @@ class NavBarManga extends React.Component {
     this.options = [];
     for (let i = 0; i < this.props.maxNumber.length; i++) {
       let option = (
-        <option value={i} key={i}>
+        <option value={i} key={i} label={i + 1}>
           {i + 1}
         </option>
       );
