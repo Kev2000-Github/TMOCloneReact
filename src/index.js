@@ -6,7 +6,7 @@ import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App minNumber={0} maxNumber={10} dir="/re_monster/cap1/" />
+    <App minNumber={0} maxNumber={23} dir="/re_monster/cap1/" />
   </React.StrictMode>,
   document.getElementById("root")
 );
