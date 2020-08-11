@@ -21,3 +21,10 @@
 .pointer {
   cursor: pointer;
 }
+
+@media (max-height: 800px) {
+  .buttons {
+    width: 80%;
+    height: auto;
+  }
+}
