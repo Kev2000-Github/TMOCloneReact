@@ -22,6 +22,11 @@
   cursor: pointer;
 }
 
+.app {
+  display: block;
+  left: 50%;
+}
+
 @media (max-height: 800px) {
   .buttons {
     width: 80%;

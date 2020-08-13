@@ -1,249 +1,175 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import logo from "./logo.svg";
 import "./App.css";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pages: {
-        min: props.minNumber,
-        max: props.maxNumber,
-        dir: props.dir,
-      },
-      visualModeInfo: {
-        mode0: "Cascada",
-        mode1: "Paginada",
-      },
-      visualMode: 1,
-      currentCache: "",
-      currentPage: 0,
-    };
-    this.cache = [];
-    let img;
-    for (let i = this.state.pages.min; i <= this.state.pages.max; i++) {
-      img = new Image();
-      img.src = process.env.PUBLIC_URL + this.state.pages.dir + i + ".jpg";
-      this.cache.push(img);
-    }
-    this.state.currentCache = this.cache[0].src;
-    this.nextImage = this.nextImage.bind(this);
-    this.previousImage = this.previousImage.bind(this);
-    this.toImage = this.toImage.bind(this);
-    this.changeMode = this.changeMode.bind(this);
+function App(props) {
+  //INITIALIZE VARIABLES
+  const path = require("path");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [visualMode, setVisualMode] = useState(1); //mode 0: cascada mode 1: paginada
+  const visualModeInfo = {
+    mode0Btn: "Paginada",
+    mode1Btn: "Cascada",
+  };
+  let cache = [];
+  //INITIALIZE CACHE
+  let img;
+  for (let i = props.minNumber; i <= props.maxNumber; i++) {
+    img = new Image();
+    img.src = process.env.PUBLIC_URL + "/re_monster/cap1/" + i + ".jpg";
+    cache.push(img);
   }
+  const [currentCache, setCurrentCache] = useState(cache[0]);
 
-  nextImage() {
-    let currentPage_ = this.state.currentPage;
-    if (this.cache[currentPage_].src === this.state.currentCache) {
-      currentPage_++;
-      if (currentPage_ >= this.cache.length)
-        currentPage_ = this.cache.length - 1;
-      this.setState({ currentPage: currentPage_ });
-      this.setState({ currentCache: this.cache[currentPage_].src });
-      console.log(this.cache[0].src);
+  function changeImage(number) {
+    let page = currentPage;
+    page += number;
+    if (page >= 0 && page <= props.maxNumber) {
+      setCurrentPage(page);
+      setCurrentCache(cache[page]);
     }
   }
 
-  previousImage() {
-    let currentPage_ = this.state.currentPage;
-    if (this.cache[currentPage_].src === this.state.currentCache) {
-      currentPage_--;
-      if (currentPage_ < 0) currentPage_ = 0;
-      this.setState({ currentPage: currentPage_ });
-      this.setState({ currentCache: this.cache[currentPage_].src });
-    }
+  function toImage() {}
+
+  function changeMode() {
+    setVisualMode(+!visualMode);
   }
 
-  toImage(pageNumber) {
-    this.setState({ currentCache: this.cache[pageNumber].src });
-    this.setState({ currentPage: pageNumber });
-  }
+  return (
+    <div className="app">
+      <NavBarManga
+        onNext={() => {
+          changeImage(1);
+        }}
+        onPrevious={() => {
+          changeImage(-1);
+        }}
+        toPage={toImage}
+        changeMode={changeMode}
+        currentPage={currentPage}
+        visualMode={visualMode}
+        visualModeInfo={visualModeInfo}
+        maxNumber={cache}
+      />
+      <MangaBody
+        currentCache={currentCache}
+        allCache={cache}
+        visualMode={visualMode}
+        onNext={() => {
+          changeImage(1);
+        }}
+        onPrevious={() => {
+          changeImage(-1);
+        }}
+      />
+      <NavBarManga
+        onNext={() => {
+          changeImage(1);
+        }}
+        onPrevious={() => {
+          changeImage(-1);
+        }}
+        toPage={toImage}
+        changeMode={changeMode}
+        currentPage={currentPage}
+        visualMode={visualMode}
+        visualModeInfo={visualModeInfo}
+        maxNumber={cache}
+      />
+    </div>
+  );
+}
 
-  changeMode() {
-    this.setState((state) => ({ visualMode: +!state.visualMode }));
-    window.scrollTo(0, 0);
-  }
-
-  render() {
-    return (
-      <div>
-        <NavBarManga
-          onNext={this.nextImage}
-          onPrevious={this.previousImage}
-          toPage={this.toImage}
-          changeMode={this.changeMode}
-          currentPage={this.state.currentPage}
-          visualMode={this.state.visualMode}
-          visualModeInfo={this.state.visualModeInfo}
-          maxNumber={this.cache}
-        />
-        <MangaBody
-          currentCache={this.state.currentCache}
-          allCache={this.cache}
-          visualMode={this.state.visualMode}
-          onNext={this.nextImage}
-          onPrevious={this.previousImage}
-        />
-        <NavBarManga
-          onNext={this.nextImage}
-          onPrevious={this.previousImage}
-          toPage={this.toImage}
-          changeMode={this.changeMode}
-          currentPage={this.state.currentPage}
-          visualMode={this.state.visualMode}
-          visualModeInfo={this.state.visualModeInfo}
-          maxNumber={this.cache}
-        />
+function NavBarManga(props) {
+  return (
+    <nav className="navbar navbar-dark bg-dark">
+      <div className="buttons d-flex justify-content-center">
+        <button className="btn btn-secondary m-2" onClick={props.onPrevious}>
+          Previous
+        </button>
+        <button className="btn btn-primary m-2" onClick={props.changeMode}>
+          {props.visualModeInfo["mode" + props.visualMode + "Btn"]}
+        </button>
+        <button className="btn btn-secondary m-2" onClick={props.onNext}>
+          Next
+        </button>
       </div>
-    );
-  }
+    </nav>
+  );
 }
 
-class NavBarManga extends React.Component {
-  constructor(props) {
-    super(props);
-    this.options = [];
-    for (let i = 0; i < this.props.maxNumber.length; i++) {
-      let option = (
-        <option value={i} key={i} label={i + 1}>
-          {i + 1}
-        </option>
-      );
-      this.options.push(option);
-    }
-    this.toPage = this.toPage.bind(this);
-  }
-
-  toPage(event) {
-    this.props.toPage(event.target.options[event.target.selectedIndex].value);
-  }
-
-  render() {
-    let visualModeBtn = this.props.visualModeInfo[
-      "mode" + this.props.visualMode
-    ];
-    let buttonsClass = "btn btn-secondary m-2 show";
-    let selectClass = "selectPage pointer form-control m-2 show";
-    if (this.props.visualMode) {
-      //MODE: PAGINADO
-      buttonsClass = buttonsClass.replace(/none/, "show");
-      selectClass = selectClass.replace(/none/, "show");
-    } else {
-      buttonsClass = buttonsClass.replace(/show/, "none");
-      selectClass = selectClass.replace(/show/, "none");
-    }
-    return (
-      <nav className="navbar navbar-dark bg-dark">
-        <div className="buttons d-flex justify-content-center">
-          <button className={buttonsClass} onClick={this.props.onPrevious}>
-            previous
-          </button>
-          <button
-            className="visualModeBtn btn btn-primary m-2"
-            onClick={this.props.changeMode}
-          >
-            {visualModeBtn}
-          </button>
-          <button className={buttonsClass} onClick={this.props.onNext}>
-            next
-          </button>
-          <select
-            onChange={this.toPage}
-            value={this.props.currentPage}
-            className={selectClass}
-          >
-            {this.options}
-          </select>
-        </div>
-      </nav>
+function MangaBody(props) {
+  let mangaMode0Class = "none";
+  let mangaMode1Class = "show";
+  let img;
+  let imgElements = [];
+  for (let i = 0; i < props.allCache.length; i++) {
+    img = (
+      <img
+        src={props.allCache[i].src}
+        alt="mangaPages"
+        className="mangaPages"
+      />
     );
-  }
-}
-
-class MangaBody extends React.Component {
-  constructor(props) {
-    super(props);
-    this.changePage = this.changePage.bind(this);
-    this.getCoordinates = this.getCoordinates.bind(this);
-    this.findLocation = this.findLocation.bind(this);
+    imgElements.push(img);
   }
 
-  findLocation(oElement) {
+  function findLocation(oElement) {
     if (typeof oElement.offsetParent != "undefined") {
       for (var posX = 0, posY = 0; oElement; oElement = oElement.offsetParent) {
         posX += oElement.offsetLeft;
         posY += oElement.offsetTop;
       }
       return [posX, posY];
+    } else {
+      return [oElement.x, oElement.y];
     }
-    return [oElement.x, oElement.y];
   }
 
-  getCoordinates(event) {
-    let imgLocation = this.findLocation(event.target);
-    let posX = event.clientX - imgLocation[0];
-    let posY = event.clientY - imgLocation[1];
+  function getCoordinates(event) {
+    let imgLocation = findLocation(event.target);
+    let posX = event.pageX - imgLocation[0];
+    let posY = event.pageY - imgLocation[1];
     return [posX, posY];
   }
 
-  changePage(event) {
-    let coordinates = this.getCoordinates(event);
+  function changePage(event) {
+    let coordinates = getCoordinates(event);
     if (coordinates[0] > event.target.clientWidth / 2) {
-      this.props.onNext();
+      props.onNext();
     } else {
-      this.props.onPrevious();
+      props.onPrevious();
     }
   }
 
-  render() {
-    let imageSrc = this.props.currentCache;
-    let mangaMode0Class = "none";
-    let mangaMode1Class = "show";
-    let preloadImgClass = "pointer none";
-    let mangaPages = [];
-    let allCache = this.props.allCache;
-    if (this.props.visualMode) {
-      //MODE: PAGINADO
-      mangaMode0Class = mangaMode0Class.replace(/show/, "none");
-      mangaMode1Class = mangaMode1Class.replace(/none/, "show");
-    } else {
-      //MODE: CASCADA
-      mangaMode0Class = mangaMode0Class.replace(/none/, "show");
-      mangaMode1Class = mangaMode1Class.replace(/show/, "none");
-      let img;
-      for (let i = 0; i < allCache.length; i++) {
-        img = (
-          <img
-            className="mangaPages"
-            src={allCache[i].src}
-            key={i}
-            alt="mangaPages"
-          />
-        );
-        mangaPages.push(img);
-      }
-    }
+  if (props.visualMode) {
+    //mode 1: paginada
+    mangaMode0Class = mangaMode0Class.replace(/show/, "none");
+    mangaMode1Class = mangaMode1Class.replace(/none/, "show");
+  } else {
+    mangaMode0Class = mangaMode0Class.replace(/none/, "show");
+    mangaMode1Class = mangaMode1Class.replace(/show/, "none");
+  }
 
-    return (
-      <main className="mainBody">
-        <div id="mangaContainer">
-          <div id="mangaMode0" className={mangaMode0Class}>
-            {mangaPages}
-          </div>
-          <div id="mangaMode1" className={mangaMode1Class}>
-            <img
-              id="mangaPage"
-              className={preloadImgClass}
-              onClick={this.changePage}
-              src={imageSrc}
-              alt="mangaPage"
-            />
-          </div>
-          <div id="preloadImg" className="none"></div>
+  return (
+    <main>
+      <div id="mangaContainer">
+        <div id="mangaMode0" className={mangaMode0Class}>
+          {imgElements}
         </div>
-      </main>
-    );
-  }
+        <div id="mangaMode1" className={mangaMode1Class}>
+          <img
+            id="mangaPage"
+            src={props.currentCache.src}
+            alt="mangaPage"
+            onClick={changePage}
+            className="pointer"
+          />
+        </div>
+      </div>
+    </main>
+  );
 }
 
 export default App;
